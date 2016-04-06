@@ -9,6 +9,9 @@ param
     [String] [Parameter(Mandatory = $false)] $ConfigurationJsonFile
 )
 
+Write-Verbose "Importing modules"
+import-module "Microsoft.TeamFoundation.DistributedTask.Task.Internal"
+
 . $PSScriptRoot\Helpers.ps1
 
 #ConfigurationJsonFile has multiple environment sections.
@@ -80,7 +83,7 @@ ForEach($match in $matches)
     $variableValue=$match
     try{
         if(Test-Path env:$matchedItem){
-            $variableValue=(get-item env:$matchedItem).Value
+            $variableValue = Get-TaskVariable -Context $distributedTaskContext -Name $matchedItem
             }
         else{
             if($Configuration.$environmentName.CustomVariables.$matchedItem){
